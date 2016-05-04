@@ -1,7 +1,9 @@
 EtheRemark
 ==========
 
-This project is an adaptation of the project [EtherPlant](http://github.com/Orange-OpenSource/EtherPlant) to view etherpad as a slides made with [remark.js](https://github.com/gnab/remark)
+This project is an adaptation of the project [EtherPlant](http://github.com/Orange-OpenSource/EtherPlant) to view etherpad as slides made with [remark.js](https://github.com/gnab/remark)
+
+No more Powerpoint (or (Libre|Open)Office Impress) file to make slides, just use Remark! Add collaborative work (ideal for a debriefing) with Etherpad and you have the best way to make cool slides with EtheRemark.
 
 ### Use
 
