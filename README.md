@@ -19,7 +19,7 @@ http://orange-opensource.github.io/EtheRemark/src/index.html?https://pad.okfn.or
 
 Just serve the files in the folder **src** via an HTTP server.
 
-### Some tricks with the remark viewer
+#### Some tricks with the remark viewer
 
 I had some features on the remark viewer:
 - Image resize : you can force image width with classes .width-200, .width-190 ... .width-100, .width-90 ... .width-10
