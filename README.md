@@ -5,7 +5,7 @@ This project is an adaptation of the project [EtherPlant](http://github.com/Oran
 
 No more Powerpoint (or (Libre|Open)Office Impress) file to make slides, just use Remark! Add collaborative work (ideal for a debriefing) with Etherpad and you have the best way to make cool slides with EtheRemark.
 
-### Use
+#### Use
 
 You can test it here:
 
