@@ -59,3 +59,4 @@ end
 #### Warning
 
 The code is not big, but was made in a few hours, so it's not good to look at... Feel free to submit patches.
+
