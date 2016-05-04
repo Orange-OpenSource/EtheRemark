@@ -1,0 +1,91 @@
+    .ui-layout-pane { 
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    } 
+    
+    .ui-layout-south {
+      font-size:16px;
+    }
+    
+    table {
+      border-collapse: collapse;
+      height: 100%;
+    }
+    
+    td, th {
+      border-right: 1px solid #888;
+      text-align: left;
+      vertical-align: top;
+      padding-right: 5px;
+      padding-left: 5px;
+    }
+    
+    a {
+      color: #F60;
+    }
+    
+    .ui-layout-north,  .ui-layout-south {
+      background-color: #333;
+      color: white;
+    }
+    
+    .ui-layout-north {
+      display: flex;
+      height: 44px;
+      line-height: 44px;
+      color: #EEE;
+    }
+    
+    .ui-layout-north > div {
+      display: inline-block;
+      border-right: 1px solid #9d9d9d;
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+    
+    .ui-layout-north h1 {
+      display: inline;
+      font-weight: normal;
+      font-size:20px !important;
+      padding: 0;
+      margin: 0;
+      color: #9d9d9d;
+    }
+    
+    #diagram {
+      cursor: move;
+    }
+
+    #exit-fs{
+      background-color: rgba(255,255,255, 0.5);
+      display: none;
+      position: absolute;
+      right: 1em;
+      color: black;
+      top: 1em;
+      z-index:100;
+    }
+    
+    .ui-layout-north a, .ui-layout-south a {
+      color: #EEE;
+      text-decoration: underline;
+    }
+
+    .ui-layout-south {
+      line-height: 30px;
+      text-align: center;
+    }
+    
+    #pad-iframe {
+      overflow: hidden;
+    }
+
+    #viewer-link-4-3, #viewer-link-16-9, #enter-fs {
+      padding-left:0.5em;
+      padding-right:0.5em;
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+    }
+

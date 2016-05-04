@@ -1,0 +1,184 @@
+<!doctype html>
+<!-- Copyleft (C) 2015 - 2015 Orange -->
+<!-- Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3 -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>EtheRemark</title>
+    
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
+    
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script src="jquery.layout-latest.js"></script>
+    <link href="layout-default-latest.css" rel="stylesheet" type="text/css">
+
+    <link href="css/etheremark.css" rel="stylesheet">
+  </head>
+  <body role='document'>
+    <div class="ui-layout-north">
+      <div><h1>EtheRemark</h1></div>
+      <div>
+	<input type="text" id="padurl" placeholder="YOUR_REMARK_PAD" />
+	<button id="load-pad">Load</button>
+      </div>
+      <div id="refresh" class="working">
+	Refresh <select id="refresh-mode">
+	<option value="0">Manual</option>
+	<option value="5">Every 5s</option>
+	<option value="10">Every 10s</option>
+	<option value="15">Every 15s</option>
+	<option value="20">Every 20s</option>
+	<option value="30">Every 30s</option>
+	</select>
+        <button id="refresh-button"><span id="next-refresh">5s</span> <i class="fa fa-refresh" aria-hidden="true"></i></button>
+      </div>
+      <div class="working">
+	<a id="viewer-link-4-3" target="_blank" href="#" title="Link to result in 4:3 ratio"><i class="fa fa-link" aria-hidden="true"></i> 4:3</a>
+      </div>
+      <div class="working">
+	<a id="viewer-link-16-9" target="_blank" href="#" title="Link to result in 16:9 ratio"><i class="fa fa-link" aria-hidden="true"></i> 16:9</a>
+      </div>
+      <div class="working">
+	<a id="enter-fs" href="#" title="Enter fullscreen mode"><i class="fa fa-expand" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="ui-layout-west">
+      <div class="not-working" style="display:none">
+	<h1>No Remark Etherpad URL given</h1>
+	<p>Enter your Etherpad address in the text field above (eg <a href="?https://pad.okfn.org/p/etheremark">https://pad.okfn.org/p/etheremark</a>).</p>
+	<p>See the <a href="https://github.com/gnab/remark" target="_blank">Remark page</a> to have more informations on Remark</p>
+
+	<p>More information on this project on GitHub : <a href="https://github.com/Orange-OpenSource/EtheRemark" target="_blank">https://github.com/Orange-OpenSource/EtheRemark</a></p>
+      </div>
+      <iframe id="pad-iframe" height="100%" width="100%" frameborder=0></iframe>
+    </div>
+    <a id="exit-fs" href="#"><i class="fa fa-compress" aria-hidden="true"></i></a>
+    <div class="ui-layout-center working"">
+      <iframe width="100%" height="100%" frameborder=0 id="render-iframe" src=""></iframe>
+    </div>
+    <div class="ui-layout-south">
+      Powered by <a href="http://etherpad.org/" target="_blank">Etherpad</a> and <a href="https://github.com/gnab/remark" target="_blank">Remark.js</a> - <a href="https://github.com/Orange-OpenSource/EtheRemark" target="_blank">Source code</a>
+    </div>
+    <script>
+    var elaspedTime=0;
+    var timer;
+    var refreshMode=5;
+    
+    function refreshRemark() {
+      $("#render-iframe")[0].contentWindow.refresh();
+    }
+
+    function launchRefreshTimer() {
+      if (refreshMode==0) {
+        clearInterval(timer);
+ 	$("#next-refresh").hide();
+      } else {
+	$("#next-refresh").text(refreshMode+"s");
+ 	$("#next-refresh").show();
+	elaspedTime=0;
+	clearInterval(timer);
+	timer=setInterval(function() {
+          elaspedTime++;
+          if (elaspedTime>=refreshMode) {
+	    refreshRemark();
+	    elaspedTime=0;
+          }
+	  var nextRefresh=refreshMode-elaspedTime;
+          $("#next-refresh").text(nextRefresh+"s");
+	}, 1000);
+      }
+    }
+
+    $(function() {
+      $("#refresh-button").on("click", function() {
+	elaspedTime=0;
+	refreshRemark();
+      });
+
+      $("#refresh-mode").change(function(){
+        var selected=$( "#refresh-mode option:selected" );
+	refreshMode=selected.val();
+	launchRefreshTimer();
+	window.location.hash = refreshMode;
+
+      });
+
+      $("#padurl").keypress(function (e) {
+	if (e.which == 13) {
+	  $("#load-pad").trigger("click");
+	}
+      });
+      
+      $("#load-pad").on("click", function() {
+	urlParam=$("#padurl").val();
+	window.location="?"+urlParam;
+      });
+      
+      urlParam = window.location.search.substr(1);
+      // Bug fix : replace %20 (space) in pad name by _
+      urlParam=urlParam.replace(/%20/g, "_");
+
+      if (m=window.location.hash.match(/^#(0|5|10|15|20|30)$/)) {
+	refreshMode=m[1];
+      }
+
+      // Retrieve pad name in etherpad URL
+      if (urlParam && urlParam.match(/.*\/(.*)$/)) {
+	var pad_name=urlParam.match(/.*\/(.*)$/)[1];
+	if (pad_name) {
+          document.title = "EtheRemark - "+pad_name;
+	}
+      }
+      // Main page with Etherpad and Result view
+      $(".not-working").hide();
+      var layout=$('body').layout({
+	north__size: 50,
+	north__minSize: 50,
+	north__maxSize: 50,
+	north__resizable: false,
+	south__size: 30,
+	south__minSize: 30,
+	south__maxSize: 30,
+	south__resizable: false,
+	west__minSize: 0,
+	west__size: .50,
+	west__maskContents: true,
+	center__size: .50,
+	center__minSize: 0,
+	center__maskContents: true,
+	stateManagement__enabled: true,
+      });
+      if (m=urlParam.substr(0,7).match(/^(fs&)?http/)) {
+	if (m[1]=="fs&") {
+	  layout.hide( "west" );
+	  layout.open( "center" );
+	  layout.hide( "north" );
+	  layout.hide( "south" );
+	  urlParam=urlParam.substr(3);
+	  $("#exit-fs").attr("href","?"+urlParam).show();
+	  $("#render-iframe").attr("src", "viewer.html?pad="+urlParam);
+	} else {
+	  $("#enter-fs").attr("href","?fs&"+urlParam);
+	  $("#viewer-link-4-3").attr("href","./viewer.html?pad="+urlParam+"&ratio=4:3");
+	  $("#viewer-link-16-9").attr("href","./viewer.html?pad="+urlParam+"&ratio=16:9");
+          $("#padurl").val(urlParam);
+	  layout.open( "west" );
+	  layout.open( "center" );
+	  layout.open( "north" );
+	  layout.open( "south" );
+	  $("#render-iframe").attr("src", "viewer.html?pad="+urlParam);
+	  $("#pad-iframe").attr("src", urlParam+"?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=true");
+	}
+	$("#refresh-mode").val(refreshMode);
+	launchRefreshTimer();
+    } else{
+      // No pad name given
+      $(".working").hide();
+      $(".not-working").show();
+    }
+    });
+    </script>
+  </body>
+</html>

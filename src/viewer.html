@@ -1,0 +1,124 @@
+<!doctype html>
+<!-- Copyleft (C) 2015 - 2015 Orange -->
+<!-- Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3 -->
+<html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>EtheRemark</title>
+    
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script src="jquery.layout-latest.js"></script>
+    <link href="layout-default-latest.css" rel="stylesheet" type="text/css">
+
+    <script src="//gnab.github.io/remark/downloads/remark-latest.min.js"></script>
+
+    <!--  taken from https://github.com/dankogai/js-deflate -->
+    <script src="rawdeflate.js"></script>
+    <!--  taken from https://github.com/dankogai/js-base64 -->
+    <script src="base64.js"></script>
+
+    <link href="css/gnab.css" rel="stylesheet">
+    <link href="css/resize.css" rel="stylesheet">
+    
+  </head>
+  <body role='document' id="remark_div">
+  </body>
+  <script>
+  // URL to PlantUML Server. Don't forget the last "/"
+  var PLANTUML_SERVER="http://plantuml.com/plantuml/";
+  
+  var slideshow;
+  var padURL;
+  var lastContent = "";
+  var lastRatio;
+  
+  function refresh() {
+    $.ajax({
+      url: padURL+"/export/txt",
+      success: function( response ) {
+        if (lastContent!=response) {
+          slideshow.loadFromString(parsePlantUml(response));
+	  if (m=window.location.hash.match(/\#(\d+)$/)) {
+	    console.log("goto slide "+m[1]);
+	    slideshow.gotoSlide(m[1]);
+	  }
+	  lastContent=response
+        }
+      }
+    });
+  }
+
+  function parsePlantUml(txt) {
+    console.log("looking for plantuml diagram");
+    diagrams=[];
+    var i=0;
+    newLastContent=txt.replace(/\@startuml([\s\S]*?)(?!\@startuml)\@enduml/mg, function(plantuml) {
+      return " .autoScale[.center[![plantuml]("+PLANTUML_SERVER+"img/"+ Base64.encode(RawDeflate.deflate(unescape(encodeURIComponent(plantuml)))) +")]]";
+    });
+    return newLastContent;
+  }
+
+  $.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null){
+      return null;
+    } else{
+      return results[1] || 0;
+    }
+  }
+  
+  $(function() {
+    padURL =  $.urlParam("pad").replace(/%20/g, "_");
+    var padName=padURL.match(/.*\/(.*)$/)[1];
+    if (padName) {
+      document.title = "Remark: "+padName;
+    }
+
+    lastRatio = $.urlParam("ratio");
+    if (! (lastRatio && (lastRatio=="4:3" || lastRatio=="16:9"))) {
+      lastRatio="4:3";
+    }
+    
+    if (padURL.substr(0,4) == "http") {
+      slideshow = remark.create({
+        source: "loading...",
+	ratio: lastRatio,
+        container: $("#remark_div")[0]
+      });
+      
+      // Resize image with autoScale class
+      slideshow.on('afterShowSlide', function (slide) {
+	var imagesToScale = $(".remark-visible .autoScale img").length;
+	if (imagesToScale>0) {
+	  var visibleSlide=$(".remark-visible");
+	  var imagesHeight=0;
+	  $(".remark-visible .autoScale img").each(function(i,image) {
+	    imagesHeight+=$(image).height();
+	  });
+	    
+	  var totalHeight=visibleSlide.find(".remark-slide").height();
+	  var slideHeight=visibleSlide.find(".remark-slide-scaler").height();
+	  var totalWidth=visibleSlide.find(".remark-slide").width();
+	  var slideWidth=visibleSlide.find(".remark-slide-content").width();
+
+	  var imageHeight=(slideHeight-(totalHeight-imagesHeight)-slideHeight*0.05)/imagesToScale;
+	  $(".remark-visible .autoScale img").each(function(i,image) {
+	    if (totalHeight > slideHeight) {
+	      $(image).height(imageHeight);
+	    }
+	    if ($(image).width()>slideWidth) {
+	      $(image).width(slideWidth);
+	    }
+	  });
+	}
+      });
+      refresh();
+    } else {
+      console.log("no url");
+    }
+  });
+  </script>
+</html>
