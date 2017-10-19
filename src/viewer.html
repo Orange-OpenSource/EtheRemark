@@ -13,7 +13,7 @@
     <script src="jquery.layout-latest.js"></script>
     <link href="layout-default-latest.css" rel="stylesheet" type="text/css">
 
-    <script src="//gnab.github.io/remark/downloads/remark-latest.min.js"></script>
+    <script src="//remarkjs.com/downloads/remark-latest.min.js"></script>
 
     <!--  taken from https://github.com/dankogai/js-deflate -->
     <script src="rawdeflate.js"></script>
@@ -91,29 +91,29 @@
       
       // Resize image with autoScale class
       slideshow.on('afterShowSlide', function (slide) {
-	var imagesToScale = $(".remark-visible .autoScale img").length;
-	if (imagesToScale>0) {
-	  var visibleSlide=$(".remark-visible");
-	  var imagesHeight=0;
-	  $(".remark-visible .autoScale img").each(function(i,image) {
-	    imagesHeight+=$(image).height();
-	  });
+		var imagesToScale = $(".remark-visible .autoScale img").length;
+		if (imagesToScale>0) {
+		  var visibleSlide=$(".remark-visible");
+		  var imagesHeight=0;
+		  $(".remark-visible .autoScale img").each(function(i,image) {
+			imagesHeight+=$(image).height();
+		  });
 	    
-	  var totalHeight=visibleSlide.find(".remark-slide").height();
-	  var slideHeight=visibleSlide.find(".remark-slide-scaler").height();
-	  var totalWidth=visibleSlide.find(".remark-slide").width();
-	  var slideWidth=visibleSlide.find(".remark-slide-content").width();
-
-	  var imageHeight=(slideHeight-(totalHeight-imagesHeight)-slideHeight*0.05)/imagesToScale;
-	  $(".remark-visible .autoScale img").each(function(i,image) {
-	    if (totalHeight > slideHeight) {
-	      $(image).height(imageHeight);
-	    }
-	    if ($(image).width()>slideWidth) {
-	      $(image).width(slideWidth);
-	    }
-	  });
-	}
+		  var totalHeight=visibleSlide.find(".remark-slide").height();
+		  var slideHeight=visibleSlide.find(".remark-slide-scaler").height();
+		  var totalWidth=visibleSlide.find(".remark-slide").width();
+		  var slideWidth=visibleSlide.find(".remark-slide-content").width();
+		  
+		  var imageHeight=(slideHeight-(totalHeight-imagesHeight)-slideHeight*0.05)/imagesToScale;
+		  $(".remark-visible .autoScale img").each(function(i,image) {
+			if (totalHeight > slideHeight) {
+			  $(image).height(imageHeight);
+			}
+			if ($(image).width()>slideWidth) {
+			  $(image).width(slideWidth);
+			}
+		  });
+		}
       });
       refresh();
     } else {
